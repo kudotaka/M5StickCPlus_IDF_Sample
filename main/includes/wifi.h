@@ -29,6 +29,7 @@ EventGroupHandle_t wifi_event_group;
 #define CONNECTED_BIT BIT0
 #define DISCONNECTED_BIT BIT1
 
-//bool wifi_isConnected(void);
+#if CONFIG_SOFTWARE_WIFI_SUPPORT
 esp_err_t wifi_isConnected(void);
+#endif
 void initialise_wifi(void);

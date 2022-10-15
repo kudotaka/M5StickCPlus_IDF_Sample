@@ -55,8 +55,10 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t e
         ESP_LOGI(TAG, "Wi-Fi reason codes: https://docs.espressif.com/projects/esp-idf/en/v4.2/esp32/api-guides/wifi.html#wi-fi-reason-code");
         xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
         xEventGroupSetBits(wifi_event_group, DISCONNECTED_BIT);
+#if CONFIG_SOFTWARE_WIFI_SUPPORT
 #if CONFIG_SOFTWARE_UI_SUPPORT
         ui_wifi_label_update(false);
+#endif
 #endif
         esp_wifi_connect();
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
@@ -64,8 +66,10 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t e
         ESP_LOGI(TAG, "Device IP address: " IPSTR, IP2STR(&event->ip_info.ip));
         xEventGroupClearBits(wifi_event_group, DISCONNECTED_BIT);
         xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
+#if CONFIG_SOFTWARE_WIFI_SUPPORT
 #if CONFIG_SOFTWARE_UI_SUPPORT
         ui_wifi_label_update(true);
+#endif
 #endif
     }
 }

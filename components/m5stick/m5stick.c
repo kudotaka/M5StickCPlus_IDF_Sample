@@ -314,6 +314,10 @@ static void guiTask(void *pvParameter) {
     // A task should NEVER return
     vTaskDelete(NULL);
 }
+
+void M5Stick_Display_SetBrightness(uint8_t brightness) {
+    Axp192_ScreenBreath(brightness);
+}
 #endif
 /* ----------------------------------------------- End -----------------------------------------------*/
 /* ===================================================================================================*/

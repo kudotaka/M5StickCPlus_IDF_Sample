@@ -123,8 +123,10 @@ static void button_task(void* pvParameters) {
 #endif
 
 #if CONFIG_SOFTWARE_RTC_SUPPORT
-TaskHandle_t xRtc;
 TaskHandle_t xClock;
+
+#if CONFIG_SOFTWARE_WIFI_SUPPORT
+TaskHandle_t xRtc;
 static bool g_timeInitialized = false;
 const char servername[] = "ntp.jst.mfeed.ad.jp";
 
@@ -184,6 +186,7 @@ void vLoopRtcTask(void *pvParametes)
         vTaskDelay( pdMS_TO_TICKS(600000) );
     }
 }
+#endif
 
 void vLoopClockTask(void *pvParametes)
 {
