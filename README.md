@@ -6,7 +6,7 @@
 - [M5StickC Plus](https://www.switch-science.com/products/6470)
 - M5Stack用温湿度気圧センサユニットVer.2
 - [M5Stack用ミニプロトユニット](https://www.switch-science.com/collections/m5stack/products/6557)を使ったお手製ボタンとLEDユニット
-- [M5Stack用メカニカルキーボタンユニット](M5Stack用メカニカルキーボタンユニット)
+- [M5Stack用メカニカルキーボタンユニット](https://www.switch-science.com/products/8303)
 - [LVGL(Light and Versatile Graphics Library)](https://lvgl.io/)
 
 ### 動作
