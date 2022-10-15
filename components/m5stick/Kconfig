@@ -1,0 +1,51 @@
+menu "My Original (M5StickCPlus)"
+    config WIFI_SSID
+        string "WiFi SSID"
+        default "AWSWorkshop"
+        help
+            SSID (network name) for the example to connect to.
+
+    config WIFI_PASSWORD
+        string "WiFi Password"
+        default "IoTP$AK1t"
+        help
+            WiFi password (WPA or WPA2) for the example to use.
+
+            Can be left blank if the network has no security set.
+endmenu
+
+menu "M5StickCPlus hardware enable"
+    choice
+        prompt "Set Model"
+        default SOFTWARE_MODEL_M5STICKCPLUS
+        config SOFTWARE_MODEL_M5STICKCPLUS
+            bool "MODEL-STICKC PLUS"
+#        config SOFTWARE_MODEL_M5STICKC
+#            bool "MODEL-STICKC"
+    endchoice
+    config SOFTWARE_WIFI_SUPPORT
+        bool "WIFI-Hardware"
+        default y
+    config SOFTWARE_UI_SUPPORT
+        bool "DISPLAY-Hardware"
+        default y
+    config SOFTWARE_SCREEN_DEMO_SUPPORT
+        bool "SCREEN-DEMO"
+        depends on SOFTWARE_UI_SUPPORT
+        default n
+    config SOFTWARE_RTC_SUPPORT
+        bool "RTC-PCF8563"
+        default y
+    config SOFTWARE_BUTTON_SUPPORT
+        bool "BUTTON-Hardware"
+        default n
+    config SOFTWARE_MPU6886_SUPPORT
+        bool "IMU-MPU6886"
+        default n
+    config SOFTWARE_BUZZER_SUPPORT
+        bool "BUZZER-Hardware"
+        default n
+    config SOFTWARE_LED_SUPPORT
+        bool "LED-Hardware"
+        default n
+endmenu
