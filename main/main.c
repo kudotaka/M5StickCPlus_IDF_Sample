@@ -24,7 +24,9 @@
 #endif
 
 #if ( CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT \
-    || CONFIG_SOFTWARE_UNIT_SK6812_SUPPORT )
+    || CONFIG_SOFTWARE_UNIT_SK6812_SUPPORT \
+    || CONFIG_SOFTWARE_UNIT_4DIGIT_DISPLAY_SUPPORT \
+    || CONFIG_SOFTWARE_UNIT_6DIGIT_DISPLAY_SUPPORT )
 #include "m5unit.h"
 #endif
 
@@ -393,6 +395,118 @@ void vexternal_LoopRGBLedBlinkTask(void *pvParametes)
 }
 #endif
 
+#if ( CONFIG_SOFTWARE_UNIT_4DIGIT_DISPLAY_SUPPORT || CONFIG_SOFTWARE_UNIT_6DIGIT_DISPLAY_SUPPORT )
+TaskHandle_t xDigitDisplay;
+DigitDisplay_t* digitdisplay_1;
+void vLoopUnitDigitDisplayTask(void *pvParametes)
+{
+    ESP_LOGI(TAG, "start Digit Display");
+
+// Sample Rowdata
+//  --0x01--
+// |        |
+//0x20     0x02
+// |        |
+//  --0x40- -
+// |        |
+//0x10     0x04
+// |        |
+//  --0x08--   0x80
+
+    uint8_t anime[] = {0x00, 0x30, 0x38, 0x78, 0x79, 0x7f};
+    uint8_t animeCurrent = 0;
+    uint8_t animeMax = sizeof(anime)/sizeof(uint8_t);
+    uint8_t animeDigitPosition = 1;
+    uint8_t animeDigitMax = DIGIT_COUNT;
+    uint8_t data = 0x00;
+
+    Tm1637_Init();
+    if (Tm1637_Enable(GPIO_NUM_33, GPIO_NUM_32) == ESP_OK) {
+        digitdisplay_1 = Tm1637_Attach(GPIO_NUM_33, GPIO_NUM_32, BRIGHT_TYPICAL);
+    } else {
+        ESP_LOGE(TAG, "Digit Display Tm1637_Enable Error");
+        vTaskDelete(NULL);
+    }
+    while(1) {
+        Tm1637_ClearDisplay(digitdisplay_1);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        for (animeDigitPosition = 1; animeDigitPosition < animeDigitMax+1; animeDigitPosition++) {
+            for (animeCurrent = 0; animeCurrent < animeMax; animeCurrent++) {
+                for (uint8_t position = DIGIT_COUNT; position > animeDigitPosition-1; position--) {
+                    for (uint8_t digit = DIGIT_COUNT; digit > 0; digit--) {
+                        data = 0x00;
+                        if (digit == position) {
+                            data += 0x80;
+                        } else {
+                            //data = 0x00;
+                        }
+
+                        if (digit == animeDigitPosition) {
+                            data += anime[animeCurrent];
+                        } else if (digit < animeDigitPosition) {
+                            data = 0xff;
+                        }
+
+                        Tm1637_DisplayBitRowdata(digitdisplay_1, digit-1, data);
+                    }
+                    vTaskDelay(pdMS_TO_TICKS(1000));
+                }
+            }
+        }
+    }
+    vTaskDelete(NULL); // Should never get to here...
+
+/*
+// Sample number
+    uint8_t listDisp_1[DIGIT_COUNT];
+    uint8_t count = 0;
+    Tm1637_Init();
+    if (Tm1637_Enable(PORT_D9_PIN, PORT_D10_PIN) == ESP_OK) {
+        digitdisplay_1 = Tm1637_Attach(PORT_D9_PIN, PORT_D10_PIN, BRIGHT_TYPICAL);
+    } else {
+        ESP_LOGE(TAG, "Digit Display Tm1637_Enable Error");
+        vTaskDelete(NULL);
+    }
+    Tm1637_ClearDisplay(digitdisplay_1);
+    while(1){
+        if (count == UINT8_MAX) {
+            count = 0;
+        }
+        if (count%2) {
+            for (uint8_t i = 0; i < DIGIT_COUNT; i++) {
+                listDisp_1[i] = i;
+            }
+        } else {
+            for (uint8_t i = 0; i < DIGIT_COUNT; i++) {
+                listDisp_1[i] = i+4;
+            }
+        }
+        Tm1637_DisplayAll(digitdisplay_1, listDisp_1);
+        count++;
+        vTaskDelay(pdMS_TO_TICKS(300));
+    }
+    vTaskDelete(NULL); // Should never get to here...
+*/
+/*
+// Sample message
+    Tm1637_Init();
+    if (Tm1637_Enable(PORT_D9_PIN, PORT_D10_PIN) == ESP_OK) {
+        digitdisplay_1 = Tm1637_Attach(PORT_D9_PIN, PORT_D10_PIN, BRIGHT_TYPICAL);
+    } else {
+        ESP_LOGE(TAG, "Digit Display Tm1637_Enable Error");
+        vTaskDelete(NULL);
+    }
+    while (1) {
+        Tm1637_ClearDisplay(digitdisplay_1);
+        vTaskDelay(pdMS_TO_TICKS(500));
+        Tm1637_DisplayStr(digitdisplay_1, "HELL0-1234567890", 500);
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+    vTaskDelete(NULL); // Should never get to here...
+*/
+}
+#endif
+
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 void app_main()
@@ -466,5 +580,10 @@ void app_main()
 #if CONFIG_SOFTWARE_UNIT_SK6812_SUPPORT
     // EXTERNAL RGB LED BLINK
     xTaskCreatePinnedToCore(&vexternal_LoopRGBLedBlinkTask, "external_rgb_led_blink_task", 4096 * 1, NULL, 2, &xExternalRGBLedBlink, 1);
+#endif
+
+#if ( CONFIG_SOFTWARE_UNIT_4DIGIT_DISPLAY_SUPPORT || CONFIG_SOFTWARE_UNIT_6DIGIT_DISPLAY_SUPPORT )
+    // DIGIT DISPLAY
+    xTaskCreatePinnedToCore(&vLoopUnitDigitDisplayTask, "vLoopUnitDigitDisplayTask", 4096 * 1, NULL, 2, &xDigitDisplay, 1);
 #endif
 }

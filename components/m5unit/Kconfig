@@ -11,4 +11,11 @@ menu "M5Unit enable"
     config SOFTWARE_UNIT_LED_SUPPORT
         bool "UNIT-LED-Hardware"
         default n
+    config SOFTWARE_UNIT_4DIGIT_DISPLAY_SUPPORT
+        bool "UNIT-4DigitDisplay"
+        default n
+    config SOFTWARE_UNIT_6DIGIT_DISPLAY_SUPPORT
+        bool "UNIT-6DigitDisplay"
+        default n
+
 endmenu
