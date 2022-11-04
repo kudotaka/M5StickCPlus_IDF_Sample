@@ -338,8 +338,8 @@ static void external_button_task(void* pvParameters) {
     M5Stick_Port_PinMode(GPIO_NUM_25, INPUT);
 
     Button_Init();
-    if (Button_Enable(GPIO_NUM_36) == ESP_OK) {
-        button_ext1 = Button_Attach(GPIO_NUM_36);
+    if (Button_Enable(GPIO_NUM_36, ACTIVE_HIGH) == ESP_OK) {
+        button_ext1 = Button_Attach(GPIO_NUM_36, ACTIVE_HIGH);
     }
     while(1){
         if (Button_WasPressed(button_ext1)) {

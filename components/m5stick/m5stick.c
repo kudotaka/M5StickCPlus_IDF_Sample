@@ -66,11 +66,11 @@ Button_t* button_b;
 
 void M5Stick_Button_Init(void) {
     Button_Init();
-    if (Button_Enable(GPIO_NUM_37) == ESP_OK) {
-        button_a = Button_Attach(GPIO_NUM_37);
+    if (Button_Enable(GPIO_NUM_37, ACTIVE_LOW) == ESP_OK) {
+        button_a = Button_Attach(GPIO_NUM_37, ACTIVE_LOW);
     }
-    if (Button_Enable(GPIO_NUM_39) == ESP_OK) {
-        button_b = Button_Attach(GPIO_NUM_39);
+    if (Button_Enable(GPIO_NUM_39, ACTIVE_LOW) == ESP_OK) {
+        button_b = Button_Attach(GPIO_NUM_39, ACTIVE_LOW);
     }
 }
 #endif
